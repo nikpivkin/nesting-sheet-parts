@@ -157,15 +157,17 @@ func NewRectangle(x, y, height, width float64) Ring {
 }
 
 func NewCircle(x, y, radius float64, numPoints int) Ring {
-	var ring []Point
+	points := make(Ring, numPoints+1)
+	angleStep := 2 * math.Pi / float64(numPoints)
+
 	for i := 0; i < numPoints; i++ {
-		ring = append(ring, Point{
-			X: x + radius*math.Cos(2*math.Pi*float64(i)/float64(numPoints)),
-			Y: y + radius*math.Sin(2*math.Pi*float64(i)/float64(numPoints)),
-		})
+		angle := angleStep * float64(i)
+		points[i] = Point{
+			X: x + radius*math.Cos(angle+math.Pi),
+			Y: y + radius*math.Sin(angle+math.Pi),
+		}
 	}
 
-	// Close the circle
-	ring = append(ring, ring[0])
-	return ring
+	points[numPoints] = points[0]
+	return points
 }
