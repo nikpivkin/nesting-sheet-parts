@@ -15,6 +15,7 @@ func main() {
 const (
 	descritizateStep = 5.0
 	sheetHeight      = 200
+	maxLength        = 1000 / descritizateStep
 
 	populationSize = 20
 	elitismRate    = 0.1
@@ -32,16 +33,20 @@ func run() error {
 	smallSquare4 := NewPolygon(NewRectangle(0, 0, 70, 70))
 	smallSquare5 := NewPolygon(NewRectangle(0, 0, 90, 90))
 
-	// circle := NewPolygon(NewCircle(50, 50, 50, 15))
+	circle := NewPolygon(NewCircle(50, 50, 50, 16))
 
 	figures := []Polygon{
-		squareWithHole, squareWithHole,
+		squareWithHole,
 		triangle, triangle,
 		smallSquare, smallSquare2, smallSquare3, smallSquare4, smallSquare5,
-		// circle,
+		triangle, triangle,
+		smallSquare, smallSquare2, smallSquare3, smallSquare4, smallSquare5,
+		squareWithHole, squareWithHole,
+		circle,
 	}
 
 	drawParts(figures, rangeSlice(0, len(figures)), "input.svg")
+	// drawParts(figures, []int{0, 6, 3, 4, 1, 7, 2, 5}, "input.svg")
 
 	fitnessFn := func(i Individual) float32 {
 
@@ -51,7 +56,7 @@ func run() error {
 			parts = append(parts, Discretize(figures[num], descritizateStep))
 		}
 
-		fill := NewBottomLeftFill(sheetHeight)
+		fill := NewBottomLeftFill(sheetHeight, maxLength)
 		offsets := fill.Run(parts)
 
 		length := calculateSheetLength(parts, offsets, descritizateStep)
@@ -63,7 +68,7 @@ func run() error {
 		fitnessFn,
 		WithPopulationSize(populationSize),
 		WithElitismRate(elitismRate),
-		WithMutationRate(0.1),
+		WithMutationRate(mutationRate),
 	)
 
 	ga.Run(numGenerations)
@@ -100,7 +105,7 @@ func drawParts(figures []Polygon, order []int, file string) error {
 		pieces = append(pieces, Discretize(figures[num], descritizateStep))
 	}
 
-	fill := NewBottomLeftFill(sheetHeight)
+	fill := NewBottomLeftFill(sheetHeight, maxLength)
 	offsets := fill.Run(pieces)
 
 	length := calculateSheetLength(pieces, offsets, descritizateStep)

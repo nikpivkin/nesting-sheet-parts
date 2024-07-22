@@ -104,6 +104,10 @@ func NewGeneticAlgorithm(numGenes int, fitnessFn fitnessFunc, options ...GAOptio
 	return ga
 }
 
+func (g *GeneticAlgorithm) Best() Individual {
+	return g.best
+}
+
 func (g *GeneticAlgorithm) Run(numGenerations int) {
 
 	g.population = g.newPopulation(g.populationSize)
@@ -258,8 +262,4 @@ func (g *GeneticAlgorithm) mutation(individual Individual) Individual {
 
 func swap(s []int, i, j int) {
 	s[i], s[j] = s[j], s[i]
-}
-
-func (g *GeneticAlgorithm) Best() Individual {
-	return g.best
 }

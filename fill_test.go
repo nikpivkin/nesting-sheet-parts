@@ -12,7 +12,7 @@ func TestXxx(t *testing.T) {
 		name     string
 		ymax     int
 		pieces   []OccypancyTable
-		expected []Point
+		expected []Offset
 	}{
 		{
 			name: "case 1",
@@ -25,7 +25,7 @@ func TestXxx(t *testing.T) {
 				NewRectanlePart(2, 2),
 				NewRectanlePart(2, 2),
 			},
-			expected: []Point{NewPoint(0, 0), NewPoint(0, 2)},
+			expected: []Offset{{0, 0}, {0, 2}},
 		},
 		{
 			name: "case 2",
@@ -37,7 +37,7 @@ func TestXxx(t *testing.T) {
 				NewRectanlePart(2, 2),
 				NewRectanlePart(2, 2),
 			},
-			expected: []Point{NewPoint(0, 0), NewPoint(2, 0)},
+			expected: []Offset{{0, 0}, {2, 0}},
 		},
 		{
 			name: "case 3",
@@ -51,7 +51,7 @@ func TestXxx(t *testing.T) {
 				NewRectanlePart(2, 2),
 				NewRectanlePart(2, 2),
 			},
-			expected: []Point{NewPoint(0, 0), NewPoint(0, 2), NewPoint(2, 0)},
+			expected: []Offset{{0, 0}, {0, 2}, {2, 0}},
 		},
 		{
 			name: "case 4",
@@ -65,7 +65,7 @@ func TestXxx(t *testing.T) {
 				NewRectanlePart(2, 2),
 				NewRectanlePart(2, 2),
 			},
-			expected: []Point{NewPoint(0, 0), NewPoint(0, 2), NewPoint(2, 2)},
+			expected: []Offset{{0, 0}, {0, 2}, {2, 2}},
 		},
 		{
 			name: "case 5",
@@ -91,7 +91,7 @@ func TestXxx(t *testing.T) {
 				},
 				NewRectanlePart(2, 2),
 			},
-			expected: []Point{NewPoint(0, 0), NewPoint(2, 0)},
+			expected: []Offset{{0, 0}, {2, 0}},
 		},
 		{
 			name: "case 6",
@@ -114,8 +114,8 @@ func TestXxx(t *testing.T) {
 					},
 				},
 			},
-			expected: []Point{
-				NewPoint(0, 0), NewPoint(0, 2),
+			expected: []Offset{
+				{0, 0}, {0, 2},
 			},
 		},
 		{
@@ -135,8 +135,8 @@ func TestXxx(t *testing.T) {
 					},
 				},
 			},
-			expected: []Point{
-				NewPoint(0, 0),
+			expected: []Offset{
+				{0, 0},
 			},
 		},
 		{
@@ -161,15 +161,15 @@ func TestXxx(t *testing.T) {
 					},
 				},
 			},
-			expected: []Point{
-				NewPoint(0, 0), NewPoint(0, 0),
+			expected: []Offset{
+				{0, 0}, {0, 0},
 			},
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			algo := NewBottomLeftFill(tt.ymax)
+			algo := NewBottomLeftFill(tt.ymax, 10)
 			got := algo.Run(tt.pieces)
 			assert.Equal(t, tt.expected, got)
 		})

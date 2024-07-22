@@ -19,7 +19,6 @@ Output:
 ![alt text](./output.png)
 
 ## TODO:
-- [ ] Fix bugs with circles
 - [ ] Support holes
 - [ ] Add support for arbitrary shapes
 - [ ] Read patterns from DXF (support CLO3D, etc.)
