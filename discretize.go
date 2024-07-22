@@ -48,7 +48,6 @@ func NewRectanlePart(height, width int) OccypancyTable {
 	return segments
 }
 
-// TODO: fix discretize for circle
 // Discretize decomposes the polygon into a number of vertical strips of the same width
 // and the part occupancy is designated by the range of part on each vertical strip
 func Discretize(poly Polygon, step float64) OccypancyTable {
@@ -83,7 +82,7 @@ func Discretize(poly Polygon, step float64) OccypancyTable {
 		ymin, ymax := y1.Y, y2.Y
 
 		// a convex figure may have a vertex between intersections
-		if vertex, ok := findVertexBetween(float64(i)*step, float64(i+1)*step); ok {
+		if vertex, ok := findVertexBetween(float64(-1)*step, float64(i)*step); ok {
 			ymin = min(ymin, vertex)
 			ymax = max(ymax, vertex)
 		}
