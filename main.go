@@ -50,7 +50,7 @@ func run() error {
 
 	fitnessFn := func(i Individual) float32 {
 
-		parts := make([]OccypancyTable, 0, len(figures))
+		parts := make([]OccupancyTable, 0, len(figures))
 
 		for _, num := range i.Order() {
 			parts = append(parts, Discretize(figures[num], descritizateStep))
@@ -79,7 +79,7 @@ func run() error {
 	return nil
 }
 
-func calculateSheetLength(parts []OccypancyTable, offsets []Offset, step int) float32 {
+func calculateSheetLength(parts []OccupancyTable, offsets []Offset, step int) float32 {
 	length := 0
 	for i, offset := range offsets {
 		xoffset := offset.column * step
@@ -99,7 +99,7 @@ func drawParts(figures []Polygon, order []int, file string) error {
 		WithSize(300, 300),
 	)
 
-	var pieces []OccypancyTable
+	var pieces []OccupancyTable
 
 	for _, num := range order {
 		pieces = append(pieces, Discretize(figures[num], descritizateStep))

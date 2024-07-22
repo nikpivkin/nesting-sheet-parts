@@ -11,7 +11,7 @@ func TestXxx(t *testing.T) {
 	tests := []struct {
 		name     string
 		ymax     int
-		pieces   []OccypancyTable
+		pieces   []OccupancyTable
 		expected []Offset
 	}{
 		{
@@ -21,7 +21,7 @@ func TestXxx(t *testing.T) {
 				[ ]
 				[ ]
 			*/
-			pieces: []OccypancyTable{
+			pieces: []OccupancyTable{
 				NewRectanlePart(2, 2),
 				NewRectanlePart(2, 2),
 			},
@@ -33,7 +33,7 @@ func TestXxx(t *testing.T) {
 			/*
 				[ ][ ]
 			*/
-			pieces: []OccypancyTable{
+			pieces: []OccupancyTable{
 				NewRectanlePart(2, 2),
 				NewRectanlePart(2, 2),
 			},
@@ -46,7 +46,7 @@ func TestXxx(t *testing.T) {
 				[ ]
 				[ ][ ]
 			*/
-			pieces: []OccypancyTable{
+			pieces: []OccupancyTable{
 				NewRectanlePart(2, 2),
 				NewRectanlePart(2, 2),
 				NewRectanlePart(2, 2),
@@ -60,7 +60,7 @@ func TestXxx(t *testing.T) {
 				[ ][ ]
 				[    ]
 			*/
-			pieces: []OccypancyTable{
+			pieces: []OccupancyTable{
 				NewRectanlePart(2, 4),
 				NewRectanlePart(2, 2),
 				NewRectanlePart(2, 2),
@@ -74,7 +74,7 @@ func TestXxx(t *testing.T) {
 				|   ]
 				| |[ ]
 			*/
-			pieces: []OccypancyTable{
+			pieces: []OccupancyTable{
 				{
 					{
 						{Start: 0, End: 4},
@@ -101,7 +101,7 @@ func TestXxx(t *testing.T) {
 				|o|
 				|x|
 			*/
-			pieces: []OccypancyTable{
+			pieces: []OccupancyTable{
 				{
 					{
 						{Start: 0, End: 2},
@@ -125,7 +125,7 @@ func TestXxx(t *testing.T) {
 				|x  x|
 				   |x|
 			*/
-			pieces: []OccypancyTable{
+			pieces: []OccupancyTable{
 				{
 					{
 						{Start: 2, End: 4},
@@ -146,7 +146,7 @@ func TestXxx(t *testing.T) {
 				|x    x|
 				|o || x|
 			*/
-			pieces: []OccypancyTable{
+			pieces: []OccupancyTable{
 				{
 					{
 						{Start: 2, End: 4},

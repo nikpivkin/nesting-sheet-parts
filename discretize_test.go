@@ -11,13 +11,13 @@ func TestDescritizate(t *testing.T) {
 		name     string
 		poly     Polygon
 		step     float64
-		expected OccypancyTable
+		expected OccupancyTable
 	}{
 		{
 			name:     "square",
 			poly:     NewPolygon(Ring{{0, 0}, {0, 1}, {2, 1}, {2, 0}, {0, 0}}, nil),
 			step:     1,
-			expected: OccypancyTable{{{0, 1}}, {{0, 1}}},
+			expected: OccupancyTable{{{0, 1}}, {{0, 1}}},
 		},
 		// {
 		// 	name: "square with inner ring",
@@ -26,19 +26,19 @@ func TestDescritizate(t *testing.T) {
 		// 		Ring{{2.5, 2.5}, {2.5, 7.5}, {7.5, 7.5}, {7.5, 2.5}, {2.5, 2.5}},
 		// 	),
 		// 	step:     2.5,
-		// 	expected: OccypancyTable{{{0, 10}}, {{0, 2.5}, {7.5, 10}}, {{0, 2.5}, {7.5, 10}}, {{0, 10}}},
+		// 	expected: OccupancyTable{{{0, 10}}, {{0, 2.5}, {7.5, 10}}, {{0, 2.5}, {7.5, 10}}, {{0, 10}}},
 		// },
 		{
 			name:     "rhombus 1",
 			poly:     NewPolygon(Ring{{0, 2}, {2, 4}, {4, 2}, {2, 0}, {0, 2}}, nil),
 			step:     2,
-			expected: OccypancyTable{{{0, 4}}, {{0, 4}}},
+			expected: OccupancyTable{{{0, 4}}, {{0, 4}}},
 		},
 		{
 			name:     "triangle 1",
 			poly:     NewPolygon(Ring{{0, 0}, {1, 3}, {4, 0}, {0, 0}}, nil),
 			step:     2,
-			expected: OccypancyTable{{{0, 2}}, {{0, 2}}},
+			expected: OccupancyTable{{{0, 2}}, {{0, 2}}},
 		},
 	}
 

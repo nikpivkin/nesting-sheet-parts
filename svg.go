@@ -86,7 +86,7 @@ func (d *SVGDrawer) AddPolygon(poly Polygon, styles ...string) {
 	d.buffer.WriteString("\n")
 }
 
-func (d *SVGDrawer) AddPart(piece OccypancyTable, step float64, offset Point, styles ...string) {
+func (d *SVGDrawer) AddPart(piece OccupancyTable, step float64, offset Point, styles ...string) {
 	for i, segment := range piece {
 		for _, interval := range segment {
 			height := interval.End - interval.Start

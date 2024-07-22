@@ -27,11 +27,11 @@ func (s Strip) End() float64 {
 	return maxEnd
 }
 
-// OccypancyTable represents the part occupancy table
-type OccypancyTable []Strip
+// OccupancyTable represents the part occupancy table
+type OccupancyTable []Strip
 
 // Just construct a rectangle
-func NewRectanlePart(height, width int) OccypancyTable {
+func NewRectanlePart(height, width int) OccupancyTable {
 	if width <= 0 || height <= 0 {
 		panic("width or height cannot be less or equal to 0")
 	}
@@ -50,7 +50,7 @@ func NewRectanlePart(height, width int) OccypancyTable {
 
 // Discretize decomposes the polygon into a number of vertical strips of the same width
 // and the part occupancy is designated by the range of part on each vertical strip
-func Discretize(poly Polygon, step float64) OccypancyTable {
+func Discretize(poly Polygon, step float64) OccupancyTable {
 	var strips []Strip
 
 	// TODO: optimize
@@ -94,5 +94,5 @@ func Discretize(poly Polygon, step float64) OccypancyTable {
 		l = r
 	}
 
-	return OccypancyTable(strips)
+	return OccupancyTable(strips)
 }

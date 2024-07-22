@@ -24,7 +24,7 @@ func NewBottomLeftFill(height int, maxLength int) *BottomLeftFill {
 
 // Run runs the Bottom-Left-Fill algorithm and returns a list of points
 // representing the placement of the parts.
-func (r *BottomLeftFill) Run(parts []OccypancyTable) []Offset {
+func (r *BottomLeftFill) Run(parts []OccupancyTable) []Offset {
 	res := make([]Offset, 0, len(parts))
 	for _, part := range parts {
 		offset := r.place(part, 0)
@@ -78,7 +78,7 @@ func (p projection) insert(stripNum int, rngNum int, rng Range) {
 	p[stripNum] = strip
 }
 
-func (r *BottomLeftFill) place(part OccypancyTable, column int) Offset {
+func (r *BottomLeftFill) place(part OccupancyTable, column int) Offset {
 
 	if column >= r.maxLength {
 		panic(fmt.Sprintf("all parts cannot be placed, column %d reached", column))
