@@ -25,6 +25,7 @@ const (
 
 func run() error {
 	squareWithHole := NewPolygon(NewRectangle(0, 0, 100, 100), NewRectangle(25, 25, 50, 50))
+	squareWithHole2 := NewPolygon(NewRectangle(0, 0, 100, 100), Ring{{75, 75}, {80, 80}, {85, 75}, {75, 75}})
 	triangle := NewPolygon(Ring{{0, 0}, {50, 100}, {100, 0}, {0, 0}})
 
 	smallSquare := NewPolygon(NewRectangle(0, 0, 10, 10))
@@ -37,6 +38,7 @@ func run() error {
 
 	figures := []Polygon{
 		squareWithHole,
+		squareWithHole2,
 		triangle, triangle,
 		smallSquare, smallSquare2, smallSquare3, smallSquare4, smallSquare5,
 		triangle, triangle,
@@ -141,6 +143,7 @@ func drawParts(figures []Polygon, order []int, file string) error {
 			"stroke-width", "1", "stroke", "red")
 		svgDrawer.AddPolygon(fig.Offset(offsetPoint),
 			"stroke-width", "1", "stroke", "black")
+		svgDrawer.AddPoint(fig.Centroid().Offset(offsetPoint), "fill", "blue")
 	}
 
 	f, err := os.Create(file)

@@ -58,6 +58,18 @@ func NewSVGDrawer(opts ...SVGDrawerOption) *SVGDrawer {
 	return d
 }
 
+func (d *SVGDrawer) AddPoint(pt Point, styles ...string) {
+	d.buffer.WriteString(`<circle cx="`)
+	d.buffer.WriteString(fmt.Sprintf("%f", pt.X))
+	d.buffer.WriteString(`" cy="`)
+	d.buffer.WriteString(fmt.Sprintf("%f", pt.Y))
+	d.buffer.WriteString(`" r="2" `)
+	for i := 0; i < len(styles); i += 2 {
+		d.buffer.WriteString(fmt.Sprintf(`%s="%s" `, styles[i], styles[i+1]))
+	}
+	d.buffer.WriteString("\n />")
+}
+
 func (d *SVGDrawer) AddPolygon(poly Polygon, styles ...string) {
 	d.buffer.WriteString(`<path d="`)
 	d.buffer.WriteString("M")

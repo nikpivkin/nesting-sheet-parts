@@ -35,14 +35,49 @@ func (r Ring) Offset(point Point) Ring {
 	return r
 }
 
+// Area returns the area of the ring
 // https://en.wikipedia.org/wiki/Shoelace_formula#Triangle_formula
 func (r Ring) Area() float64 {
 	var area float64
-	for i := 0; i < len(r); i++ {
-		area += r[i].X * r[(i+1)%len(r)].Y
-		area -= r[i].Y * r[(i+1)%len(r)].X
+	for i := 0; i < len(r)-1; i++ {
+		area += r[i].X * r[(i+1)].Y
+		area -= r[i].Y * r[(i+1)].X
 	}
-	return math.Abs(area / 2)
+	// the sign of the area changes because the points are numbered clockwise.
+	return area / -2
+}
+
+// Centroid returns the centroid of the ring
+// https://en.wikipedia.org/wiki/Centroid#Of_a_polygon
+func (r Ring) Centroid() Point {
+	area := -r.Area()
+	var x, y float64
+	for i := 0; i < len(r)-1; i++ {
+		x += (r[i].X + r[i+1].X) * (r[i].X*r[i+1].Y - r[i+1].X*r[i].Y)
+		y += (r[i].Y + r[i+1].Y) * (r[i].X*r[i+1].Y - r[i+1].X*r[i].Y)
+	}
+
+	x /= (6 * area)
+	y /= (6 * area)
+	return NewPoint(x, y)
+}
+
+// Rotate returns a new ring that is rotated by the given angle in degrees
+// around the given point.
+// https://en.wikipedia.org/wiki/Rotation_(mathematics)#Two_dimensions
+func (r Ring) Rotate(angle float64, center Point) Ring {
+	radians := angle * math.Pi / 180.0
+	rotated := make(Ring, len(r))
+
+	for i, point := range r {
+		rotatedPoint := NewPoint(
+			(point.X-center.X)*math.Cos(radians)-(point.Y-center.Y)*math.Sin(radians)+center.X,
+			(point.X-center.X)*math.Sin(radians)+(point.Y-center.Y)*math.Cos(radians)+center.Y,
+		)
+		rotated[i] = rotatedPoint
+	}
+
+	return rotated
 }
 
 // Polygon represents a 2D polygon, which is defained by outer and inner rings.
@@ -81,12 +116,49 @@ func (p Polygon) Offset(point Point) Polygon {
 	}
 }
 
+// Area returns the area of the polygon
 func (p Polygon) Area() float64 {
 	area := p.outerRing.Area()
 	for _, r := range p.innerRings {
 		area -= r.Area()
 	}
 	return area
+}
+
+// Centroid returns the centroid of the polygon
+func (p Polygon) Centroid() Point {
+	if len(p.innerRings) == 0 {
+		return p.outerRing.Centroid()
+	}
+
+	outerArea := p.outerRing.Area()
+	totalArea := outerArea
+
+	var x, y float64
+	for i := 0; i < len(p.innerRings); i++ {
+		innerArea := p.innerRings[i].Area()
+		totalArea -= innerArea
+
+		centroid := p.innerRings[i].Centroid()
+		x -= centroid.X * innerArea
+		y -= centroid.Y * innerArea
+	}
+
+	centroid := p.outerRing.Centroid()
+	x += centroid.X * outerArea
+	y += centroid.Y * outerArea
+
+	return NewPoint(x/totalArea, y/totalArea)
+}
+
+// Rotate returns a new polygon rotated by the given angle in degrees
+func (p Polygon) Rotate(angle float64) Polygon {
+	inners := make([]Ring, len(p.innerRings))
+	for i, innerRing := range p.innerRings {
+		inners[i] = innerRing.Rotate(angle, p.outerRing.Centroid())
+	}
+	outer := p.outerRing.Rotate(angle, p.outerRing.Centroid())
+	return NewPolygon(outer, inners...)
 }
 
 type VerticalLine = float64
@@ -167,9 +239,9 @@ func (l Line) y(x float64) float64 {
 
 func NewRectangle(x, y, height, width float64) Ring {
 	return Ring{{X: x, Y: y},
-		{X: x + width, Y: y},
-		{X: x + width, Y: y + height},
 		{X: x, Y: y + height},
+		{X: x + width, Y: y + height},
+		{X: x + width, Y: y},
 		{X: x, Y: y},
 	}
 }
