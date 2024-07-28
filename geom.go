@@ -35,6 +35,16 @@ func (r Ring) Offset(point Point) Ring {
 	return r
 }
 
+// https://en.wikipedia.org/wiki/Shoelace_formula#Triangle_formula
+func (r Ring) Area() float64 {
+	var area float64
+	for i := 0; i < len(r); i++ {
+		area += r[i].X * r[(i+1)%len(r)].Y
+		area -= r[i].Y * r[(i+1)%len(r)].X
+	}
+	return math.Abs(area / 2)
+}
+
 // Polygon represents a 2D polygon, which is defained by outer and inner rings.
 // Polygon has only one outer ring and zero or more inner rings.
 type Polygon struct {
@@ -69,6 +79,14 @@ func (p Polygon) Offset(point Point) Polygon {
 		outerRing:  outherRing,
 		innerRings: innerRings,
 	}
+}
+
+func (p Polygon) Area() float64 {
+	area := p.outerRing.Area()
+	for _, r := range p.innerRings {
+		area -= r.Area()
+	}
+	return area
 }
 
 type VerticalLine = float64

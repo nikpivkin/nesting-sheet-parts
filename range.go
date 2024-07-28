@@ -62,7 +62,6 @@ func (i Range) Split(others []Range) []Range {
 
 	for _, other := range others {
 		if !i.Includes(other) {
-			// TODO: fix panic with circle
 			panic(fmt.Sprintf("range.Split: range %v must include all other ranges, but %v does not", i, other))
 		}
 	}

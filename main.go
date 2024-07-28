@@ -111,6 +111,15 @@ func drawParts(figures []Polygon, order []int, file string) error {
 	length := calculateSheetLength(pieces, offsets, descritizateStep)
 	fmt.Println("Length:", length)
 
+	sheetArea := length * sheetHeight
+	fmt.Println("Area:", sheetArea)
+
+	var figuresArea float64
+	for _, fig := range figures {
+		figuresArea += fig.Area()
+	}
+	fmt.Println("Free area:", float64(sheetArea)-figuresArea)
+
 	svgDrawer.AddLine(
 		float64(length), 0, float64(length), sheetHeight,
 		"stroke-width", "2", "stroke-dasharray", "5", "stroke", "blue",
