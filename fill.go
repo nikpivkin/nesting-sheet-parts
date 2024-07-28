@@ -49,7 +49,11 @@ func (r *BottomLeftFill) getVacancyStrip(num int) Strip {
 func (r *BottomLeftFill) insert(projection projection, offset Offset) {
 	for stripNum, strip := range projection {
 		for intervalNum, rng := range strip {
-			r.insertStrip(offset.column+stripNum, intervalNum, rng.Add(offset.y))
+			offseted := make([]Range, len(rng))
+			for i, r := range rng {
+				offseted[i] = r.Add(offset.y)
+			}
+			r.insertStrip(offset.column+stripNum, intervalNum, offseted...)
 		}
 	}
 }
@@ -66,15 +70,15 @@ func (r *BottomLeftFill) insertStrip(stripNum int, rngNum int, strip ...Range) {
 
 // projection represents the projection of the part to sheet
 // it is a map of sheet strip number to a map of sheet range number to range
-type projection map[int]map[int]Range
+type projection map[int]map[int][]Range
 
 func (p projection) insert(stripNum int, rngNum int, rng Range) {
 	strip, exists := p[stripNum]
 	if !exists {
-		strip = make(map[int]Range)
+		strip = make(map[int][]Range)
 		p[stripNum] = strip
 	}
-	strip[rngNum] = rng
+	strip[rngNum] = append(strip[rngNum], rng)
 	p[stripNum] = strip
 }
 
@@ -110,9 +114,11 @@ func (r *BottomLeftFill) place(part OccupancyTable, column int) Offset {
 			offset.y = max(offset.y, newoffset)
 
 			for column, projectionStrip := range projection {
-				for vacantRngNum, projectionRng := range projectionStrip {
-					if !r.canPlace(offset, column, vacantRngNum, projectionRng) {
-						return r.place(part, offset.column+1)
+				for vacantRngNum, projectionRanges := range projectionStrip {
+					for _, projectionRange := range projectionRanges {
+						if !r.canPlace(offset, column, vacantRngNum, projectionRange) {
+							return r.place(part, offset.column+1)
+						}
 					}
 				}
 			}

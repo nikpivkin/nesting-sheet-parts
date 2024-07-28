@@ -175,7 +175,10 @@ func (p Polygon) Intersections(line VerticalLine) Intersection {
 
 	var inner [][]Point
 	for _, innerRing := range p.innerRings {
-		inner = append(inner, innerRing.Intersections(line))
+		intersections := innerRing.Intersections(line)
+		if len(intersections) > 0 {
+			inner = append(inner, intersections)
+		}
 	}
 
 	return Intersection{
@@ -211,6 +214,10 @@ func (r Ring) Intersections(line VerticalLine) []Point {
 	for i := 0; i < len(r)-1; i++ {
 		l := Line{Start: r[i], End: r[i+1]}
 		if point, ok := l.Intersect(line); ok {
+			// Don't add the same point twice
+			if len(intersections) > 0 && point == intersections[len(intersections)-1] {
+				continue
+			}
 			intersections = append(intersections, point)
 		}
 	}

@@ -53,46 +53,62 @@ func NewRectanlePart(height, width int) OccupancyTable {
 func Discretize(poly Polygon, step float64) OccupancyTable {
 	var strips []Strip
 
-	// TODO: optimize
-	// TODO: need to return a list of vertices
-	findVertexBetween := func(x1, x2 float64) (float64, bool) {
-		for _, point := range poly.outerRing {
-			if point.X > x1 && point.X < x2 {
-				return point.Y, true
-			}
-		}
-
-		return 0, false
-	}
-
 	minx, _, maxx, _ := poly.Bounds()
 	l := poly.Intersections(minx)
 
 	for i := minx + step; i < maxx+step; i = i + step {
 		r := poly.Intersections(i)
 
-		y1 := slices.MinFunc(append(l.Outer, r.Outer...), func(a, b Point) int {
-			return cmp.Compare(a.Y, b.Y)
-		})
+		outerRange := findOccupancyRange(poly.outerRing, l.Outer, r.Outer, i, step)
 
-		y2 := slices.MaxFunc(append(l.Outer, r.Outer...), func(a, b Point) int {
-			return cmp.Compare(a.Y, b.Y)
-		})
+		var inners []Range
 
-		ymin, ymax := y1.Y, y2.Y
-
-		// a convex figure may have a vertex between intersections
-		if vertex, ok := findVertexBetween(float64(-1)*step, float64(i)*step); ok {
-			ymin = min(ymin, vertex)
-			ymax = max(ymax, vertex)
+		for _, inner := range poly.innerRings {
+			ri := inner.Intersections(i)
+			li := inner.Intersections(i - step)
+			if len(ri) == 0 || len(li) == 0 {
+				continue
+			}
+			innerRange := findOccupancyRange(inner, li, ri, i, step)
+			inners = append(inners, innerRange)
 		}
 
-		// TODO: handle holes
-
-		strips = append(strips, Strip{{Start: ymin, End: ymax}})
+		strips = append(strips, outerRange.Split(inners))
 
 		l = r
 	}
 
 	return OccupancyTable(strips)
+}
+
+func findOccupancyRange(ring Ring, l, r []Point, i float64, step float64) Range {
+	findVerticesBetween := func(x1, x2 float64) []float64 {
+		var vertices []float64
+		for _, point := range ring {
+			if point.X > x1 && point.X < x2 {
+				vertices = append(vertices, point.Y)
+			}
+		}
+
+		return vertices
+	}
+
+	y1 := slices.MinFunc(append(l, r...), func(a, b Point) int {
+		return cmp.Compare(a.Y, b.Y)
+	})
+
+	y2 := slices.MaxFunc(append(l, r...), func(a, b Point) int {
+		return cmp.Compare(a.Y, b.Y)
+	})
+
+	ymin, ymax := y1.Y, y2.Y
+
+	// a convex figure may have a vertex between intersections
+	vertices := findVerticesBetween(float64(i-step), float64(i))
+	if len(vertices) > 0 {
+		ymin = min(ymin, slices.Min(vertices))
+		ymax = max(ymax, slices.Max(vertices))
+	}
+
+	return NewRange(ymin, ymax)
 }

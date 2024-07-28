@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"math/rand"
 	"os"
 )
 
@@ -138,9 +139,9 @@ func drawParts(figures []Polygon, order []int, file string) error {
 		piece := pieces[i]
 		fig := figures[num]
 
-		// TODO: generate random color
+		color := fmt.Sprintf("#%02x%02x%02x", randRange(100, 255), randRange(100, 255), randRange(100, 255))
 		svgDrawer.AddPart(piece, descritizateStep, offsetPoint,
-			"stroke-width", "1", "stroke", "red")
+			"stroke-width", "1", "stroke", color)
 		svgDrawer.AddPolygon(fig.Offset(offsetPoint),
 			"stroke-width", "1", "stroke", "black")
 		svgDrawer.AddPoint(fig.Centroid().Offset(offsetPoint), "fill", "blue")
@@ -155,4 +156,8 @@ func drawParts(figures []Polygon, order []int, file string) error {
 	svgDrawer.Write(f)
 
 	return nil
+}
+
+func randRange(min, max int) int {
+	return rand.Intn(max-min) + min
 }

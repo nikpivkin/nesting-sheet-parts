@@ -19,15 +19,15 @@ func TestDescritizate(t *testing.T) {
 			step:     1,
 			expected: OccupancyTable{{{0, 1}}, {{0, 1}}},
 		},
-		// {
-		// 	name: "square with inner ring",
-		// 	poly: NewPolygon(
-		// 		Ring{{0, 0}, {0, 10}, {10, 10}, {10, 0}, {0, 0}},
-		// 		Ring{{2.5, 2.5}, {2.5, 7.5}, {7.5, 7.5}, {7.5, 2.5}, {2.5, 2.5}},
-		// 	),
-		// 	step:     2.5,
-		// 	expected: OccupancyTable{{{0, 10}}, {{0, 2.5}, {7.5, 10}}, {{0, 2.5}, {7.5, 10}}, {{0, 10}}},
-		// },
+		{
+			name: "square with inner ring",
+			poly: NewPolygon(
+				Ring{{0, 0}, {0, 10}, {10, 10}, {10, 0}, {0, 0}},
+				Ring{{2.5, 2.5}, {2.5, 7.5}, {7.5, 7.5}, {7.5, 2.5}, {2.5, 2.5}},
+			),
+			step:     2.5,
+			expected: OccupancyTable{{{0, 10}}, {{0, 2.5}, {7.5, 10}}, {{0, 2.5}, {7.5, 10}}, {{0, 10}}},
+		},
 		{
 			name:     "rhombus 1",
 			poly:     NewPolygon(Ring{{0, 2}, {2, 4}, {4, 2}, {2, 0}, {0, 2}}, nil),
@@ -38,7 +38,7 @@ func TestDescritizate(t *testing.T) {
 			name:     "triangle 1",
 			poly:     NewPolygon(Ring{{0, 0}, {1, 3}, {4, 0}, {0, 0}}, nil),
 			step:     2,
-			expected: OccupancyTable{{{0, 2}}, {{0, 2}}},
+			expected: OccupancyTable{{{0, 3}}, {{0, 2}}},
 		},
 	}
 
