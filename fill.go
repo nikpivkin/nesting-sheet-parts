@@ -9,7 +9,7 @@ import (
 // placing a sequence of parts in a sheet
 type BottomLeftFill struct {
 	// the height of the sheet
-	height int
+	height float32
 	// the maximum length of the sheet
 	maxLength int
 	// represents a table of strips
@@ -17,7 +17,7 @@ type BottomLeftFill struct {
 }
 
 // TODO: pass maxLength as option
-func NewBottomLeftFill(height int, maxLength int) *BottomLeftFill {
+func NewBottomLeftFill(height float32, maxLength int) *BottomLeftFill {
 	return &BottomLeftFill{
 		height:       height,
 		maxLength:    maxLength,
