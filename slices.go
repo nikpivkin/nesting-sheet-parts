@@ -1,8 +1,8 @@
 package main
 
-func rangeSlice(start, end int) []int {
+func rangeSlice(start, end int, step int) []int {
 	var result []int
-	for i := start; i < end; i++ {
+	for i := start; i < end; i += step {
 		result = append(result, i)
 	}
 	return result

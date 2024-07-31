@@ -68,16 +68,36 @@ func (r Ring) Centroid() Point {
 func (r Ring) Rotate(angle float64, center Point) Ring {
 	radians := angle * math.Pi / 180.0
 	rotated := make(Ring, len(r))
-
+	cos := math.Cos(radians)
+	sin := math.Sin(radians)
 	for i, point := range r {
-		rotatedPoint := NewPoint(
-			(point.X-center.X)*math.Cos(radians)-(point.Y-center.Y)*math.Sin(radians)+center.X,
-			(point.X-center.X)*math.Sin(radians)+(point.Y-center.Y)*math.Cos(radians)+center.Y,
+		// TODO:
+		x := point.X - center.X
+		y := point.Y - center.Y
+		rotated[i] = NewPoint(
+			toFixed(x*cos-y*sin+center.X, 4),
+			toFixed(x*sin+y*cos+center.Y, 4),
 		)
-		rotated[i] = rotatedPoint
 	}
 
 	return rotated
+}
+
+func round(num float64) int {
+	return int(num + math.Copysign(0.5, num))
+}
+
+func toFixed(num float64, precision int) float64 {
+	output := math.Pow(10, float64(precision))
+	return float64(round(num*output)) / output
+}
+
+func (r Ring) Scale(factor float64) Ring {
+	for i := 0; i < len(r); i++ {
+		r[i].X *= factor
+		r[i].Y *= factor
+	}
+	return r
 }
 
 // Polygon represents a 2D polygon, which is defained by outer and inner rings.
@@ -158,7 +178,22 @@ func (p Polygon) Rotate(angle float64) Polygon {
 		inners[i] = innerRing.Rotate(angle, p.outerRing.Centroid())
 	}
 	outer := p.outerRing.Rotate(angle, p.outerRing.Centroid())
-	return NewPolygon(outer, inners...)
+	rotated := NewPolygon(outer, inners...)
+	minx, miny, _, _ := rotated.Bounds()
+	// move coordinate system back to (0, 0)
+	return rotated.Offset(NewPoint(-minx, -miny))
+}
+
+func (p Polygon) Scale(factor float64) Polygon {
+	inners := make([]Ring, len(p.innerRings))
+	for i, innerRing := range p.innerRings {
+		inners[i] = innerRing.Scale(factor)
+	}
+	outer := p.outerRing.Scale(factor)
+	poly := NewPolygon(outer, inners...)
+	minx, miny, _, _ := poly.Bounds()
+	// move coordinate system back to (0, 0)
+	return poly.Offset(NewPoint(-minx, -miny))
 }
 
 type VerticalLine = float64
@@ -187,6 +222,7 @@ func (p Polygon) Intersections(line VerticalLine) Intersection {
 	}
 }
 
+// Bounds returns the bounds (minx, miny, maxx, maxy) of the polygon
 func (p Polygon) Bounds() (float64, float64, float64, float64) {
 	if len(p.outerRing) == 0 {
 		return 0, 0, 0, 0
@@ -205,6 +241,11 @@ func (p Polygon) Bounds() (float64, float64, float64, float64) {
 	}
 
 	return minx, miny, maxx, maxy
+}
+
+func (p Polygon) Width() float64 {
+	_, _, width, _ := p.Bounds()
+	return width
 }
 
 // Intersections returns the intersections of the ring with the given line

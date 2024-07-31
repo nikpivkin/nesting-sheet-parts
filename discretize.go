@@ -110,5 +110,5 @@ func findOccupancyRange(ring Ring, l, r []Point, i float64, step float64) Range 
 		ymax = max(ymax, slices.Max(vertices))
 	}
 
-	return NewRange(ymin, ymax)
+	return NewRange(toFixed(ymin, 4), toFixed(ymax, 4))
 }

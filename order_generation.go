@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	noImprovementLimit    = 10
+	noImprovementLimit    = 20
 	noNewIndividualsLimit = 20
 )
 
@@ -33,7 +33,7 @@ func (i Individual) Hash() string {
 
 func NewIndividual(numGenes int) Individual {
 	individual := Individual{
-		chromosome: rangeSlice(0, numGenes),
+		chromosome: rangeSlice(0, numGenes, 1),
 	}
 	shuffle(individual.chromosome)
 	return individual
@@ -114,6 +114,8 @@ func (g *GeneticAlgorithm) Run(numGenerations int) {
 		sort.Slice(g.population, func(i, j int) bool {
 			return g.population[i].fitness > g.population[j].fitness
 		})
+
+		fmt.Printf("Best chromosome: %v, fitness: %f\n", g.population[0].chromosome, g.population[0].fitness)
 
 		if generation == 0 {
 			g.best = g.population[0]

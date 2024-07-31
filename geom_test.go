@@ -137,7 +137,7 @@ func TestPolygon_Rotate(t *testing.T) {
 		expected Polygon
 	}{
 		{
-			name:  "case 1",
+			name:  "square rotated 90",
 			poly:  NewPolygon(NewRectangle(0, 0, 4, 4)),
 			angle: 90,
 			expected: NewPolygon(

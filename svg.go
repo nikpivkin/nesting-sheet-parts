@@ -63,7 +63,7 @@ func (d *SVGDrawer) AddPoint(pt Point, styles ...string) {
 	d.buffer.WriteString(fmt.Sprintf("%f", pt.X))
 	d.buffer.WriteString(`" cy="`)
 	d.buffer.WriteString(fmt.Sprintf("%f", pt.Y))
-	d.buffer.WriteString(`" r="2" `)
+	d.buffer.WriteString(`" `)
 	for i := 0; i < len(styles); i += 2 {
 		d.buffer.WriteString(fmt.Sprintf(`%s="%s" `, styles[i], styles[i+1]))
 	}
@@ -141,6 +141,23 @@ func (d *SVGDrawer) AddLine(x1, y1, x2, y2 float64, styles ...string) {
 		d.buffer.WriteString(fmt.Sprintf(`%s="%s" `, styles[i], styles[i+1]))
 	}
 	d.buffer.WriteString(`fill="none" />`)
+	d.buffer.WriteString("\n")
+}
+
+func (d *SVGDrawer) AddText(pt Point, text string, styles ...string) {
+	d.buffer.WriteString(`\n<text x="`)
+	d.buffer.WriteString(fmt.Sprintf("%f", pt.X))
+	d.buffer.WriteString(`" y="`)
+	d.buffer.WriteString(fmt.Sprintf("%f", -pt.Y))
+
+	d.buffer.WriteString(`" transform="scale(1,-1)" `)
+
+	for i := 0; i < len(styles); i += 2 {
+		d.buffer.WriteString(fmt.Sprintf(`%s="%s" `, styles[i], styles[i+1]))
+	}
+	d.buffer.WriteString(`fill="black" >`)
+	d.buffer.WriteString(text)
+	d.buffer.WriteString(`</text>`)
 	d.buffer.WriteString("\n")
 }
 
