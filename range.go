@@ -15,9 +15,11 @@ func NewRange(start, end float64) Range {
 	return Range{Start: start, End: end}
 }
 
+const epsilon = 0.000001
+
 // Includes returns true if the range includes the other
 func (s Range) Includes(other Range) bool {
-	return other.Start >= s.Start && other.End <= s.End
+	return s.Start-epsilon <= other.Start && s.End+epsilon >= other.End
 }
 
 // Overlaps returns true if the range overlaps with the other
@@ -33,16 +35,16 @@ func (s Range) Length() float64 {
 // Add adds a value to the range
 func (s Range) Add(val float64) Range {
 	return Range{
-		Start: s.Start + val,
-		End:   s.End + val,
+		Start: toFixed(s.Start+val, 4),
+		End:   toFixed(s.End+val, 4),
 	}
 }
 
 // Offset returns a new range that is offset by the given point
 func (s Range) Offset(point Point) Range {
 	return Range{
-		Start: s.Start + point.X,
-		End:   s.End + point.Y,
+		Start: toFixed(s.Start+point.X, 4),
+		End:   toFixed(s.End+point.X, 4),
 	}
 }
 

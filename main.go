@@ -206,7 +206,7 @@ func calculateSheetLength(parts []*Part, step float64) float32 {
 func drawParts(parts []*Part, order []int, file string) error {
 	// TODO: fit svg to full screen and fix scroll bar
 	svgDrawer := NewSVGDrawer(
-		WithOffset(100, -300),
+		WithOffset(100, -100),
 		WithScale(1),
 		WithSize(300, 300),
 	)
@@ -254,6 +254,8 @@ func drawParts(parts []*Part, order []int, file string) error {
 		// TODO: draw text over figures
 		svgDrawer.AddText(center.Offset(NewPoint(2, 2)), fmt.Sprintf("%d", i), "font-size", "4")
 	}
+
+	svgDrawer.AddPart(fill.getVacancyTable(), *resolution, NewPoint(0, 0), "stroke-width", "1", "stroke", "black")
 
 	f, err := os.Create(file)
 	if err != nil {

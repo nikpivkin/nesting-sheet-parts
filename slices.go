@@ -30,3 +30,14 @@ func swapSliceParts(slice []int, index int) []int {
 func swap(s []int, i, j int) {
 	s[i], s[j] = s[j], s[i]
 }
+
+func insertSlice[E any](slice []E, index int, elements ...E) []E {
+	if index < 0 || index > len(slice) {
+		return slice
+	}
+
+	resultSlice := append(slice[:index], elements...)
+	resultSlice = append(resultSlice, slice[index+1:]...)
+
+	return resultSlice
+}

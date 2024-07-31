@@ -91,7 +91,7 @@ func (p projection) insert(stripNum int, rngNum int, rng Range) {
 func (r *BottomLeftFill) place(part *Part) projection {
 	projections := make([]projection, 0, len(part.Orientations))
 	for i, orientation := range part.Orientations {
-		projection := r.placeOrientation(orientation.occupancy, 0)
+		projection := r.placeOrientation(orientation.occupancy, Offset{})
 		projection.orderNum = i
 		projections = append(projections, projection)
 	}
@@ -109,20 +109,19 @@ func (r *BottomLeftFill) place(part *Part) projection {
 	return projections[0]
 }
 
-func (r *BottomLeftFill) placeOrientation(part OccupancyTable, column int) projection {
-	if column >= r.maxLength {
-		panic(fmt.Sprintf("all parts cannot be placed, column %d reached", column))
+func (r *BottomLeftFill) placeOrientation(part OccupancyTable, offset Offset) projection {
+	if offset.column >= r.maxLength {
+		panic(fmt.Sprintf("all parts cannot be placed, column %d reached", offset.column))
 	}
 
 	var (
 		cursor     int // the index of the placed strip
 		projection = projection{
-			offset: Offset{column, 0}, // offset is the current position of the part
+			offset: offset, // offset is the current position of the part
 			val:    make(map[int]map[int][]Range),
 		}
 	)
 
-start:
 	for cursor != len(part) {
 		strip := part[cursor]
 
@@ -135,23 +134,21 @@ start:
 		for _, stripRange := range strip {
 			ok, rngNum, vacantRange := r.findVacantRange(projection.offset, cursor, stripRange)
 			if !ok {
-				// TODO: use binary search?
 				// failed to place a segment of the piece, move to the next column
-				return r.placeOrientation(part, projection.offset.column+1)
+				return r.placeOrientation(part, Offset{
+					column: projection.offset.column + 1,
+					y:      0,
+				})
 			}
 
-			newoffset := vacantRange.Start - stripRange.Start
+			newoffset := toFixed(vacantRange.Start-stripRange.Start, 4)
 			projection.offset.y = max(projection.offset.y, newoffset)
 
 			for column, projectionStrip := range projection.val {
 				for vacantRngNum, projectionRanges := range projectionStrip {
 					for _, projectionRange := range projectionRanges {
 						if !r.canPlace(projection.offset, column, vacantRngNum, projectionRange) {
-							// TODO: fix infinite loop
-							// return r.placeOrientation(part, projection.offset.column+1)
-							projection.val = make(map[int]map[int][]Range)
-							cursor = 0
-							goto start
+							return r.placeOrientation(part, projection.offset)
 						}
 					}
 				}
@@ -181,13 +178,15 @@ func (r *BottomLeftFill) canPlace(offset Offset, columnOffset int, rngNum int, r
 	return vacantRng.Includes(rng.Add(offset.y))
 }
 
-func insertSlice[E any](slice []E, index int, elements ...E) []E {
-	if index < 0 || index > len(slice) {
-		return slice
+func (r *BottomLeftFill) getVacancyTable() OccupancyTable {
+	table := make(OccupancyTable, len(r.vacancyTable))
+	keys := make([]int, 0, len(r.vacancyTable))
+	for k := range r.vacancyTable {
+		keys = append(keys, k)
 	}
-
-	resultSlice := append(slice[:index], elements...)
-	resultSlice = append(resultSlice, slice[index+1:]...)
-
-	return resultSlice
+	sort.Ints(keys)
+	for _, k := range keys {
+		table[k] = r.vacancyTable[k]
+	}
+	return table
 }

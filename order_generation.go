@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	noImprovementLimit    = 20
+	noImprovementLimit    = 10
 	noNewIndividualsLimit = 20
 )
 

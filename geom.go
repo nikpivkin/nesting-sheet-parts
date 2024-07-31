@@ -14,8 +14,8 @@ func NewPoint(x, y float64) Point {
 // Offset returns a new point that is offset by the given point
 func (p Point) Offset(point Point) Point {
 	return Point{
-		X: p.X + point.X,
-		Y: p.Y + point.Y,
+		X: toFixed(p.X+point.X, 4),
+		Y: toFixed(p.Y+point.Y, 4),
 	}
 }
 
